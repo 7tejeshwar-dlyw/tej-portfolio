@@ -2,7 +2,7 @@
 
 A single-canvas personal portfolio built for the **DoTA Vibe Coding Competition**
 (theme: personal portfolio website). No page scroll, no framework, no build step —
-the entire site is one `<canvas>` of ~12,000 particles that morph between formations,
+the entire site is one `<canvas>` of ~13,000 particles that morph between formations,
 each one demonstrating a real function of **[lowk.in](https://lowk.in)**.
 
 ## The idea
@@ -43,10 +43,16 @@ deployment end to end.
 - **One canvas, 60fps.** All particle state lives in pre-allocated `Float32Array`s;
   the render loop makes zero per-frame allocations. Spring physics drive the morphs and
   cursor repulsion.
-- **Silhouette by alpha-sampling.** The portrait is built by sampling pixels wherever
-  `alpha > threshold` from `me.png` (a generic transparent head-and-shoulders silhouette
-  placeholder — drop in a real cutout to personalise). If the image is ever missing, the
-  same pipeline falls back to a procedural silhouette path, so it never breaks.
+- **Edge-weighted silhouette by alpha-sampling.** An offscreen head-and-shoulders bust
+  (procedural — bushy curls, jaw, neck, sloped shoulders) is alpha-sampled wherever
+  `alpha > threshold`, and each sample is classified as **edge** (near a transparency
+  boundary) or **interior**. ~70% of particles trace the bright, dense outline; the rest
+  scatter dimly through the interior — a sculpted, portrait-grade look, not a flat fill.
+  The same `sampleSilhouette(img)` pipeline accepts a transparent `me.png` cutout to swap
+  in a real photo.
+- **Tonal depth + living field.** Three ink shades (edge → bright, interior → dim) plus
+  per-particle size variation give the figure dimension; a gentle idle shimmer and a
+  soft pulsing glow on the lowk node keep it alive without noise.
 - **Accessible.** Real buttons with `aria-label`s, visible keyboard focus, keyboard
   shortcuts `1–7`, an `aria-live` caption, readable contrast, and full `<title>`/OG tags.
 - **`prefers-reduced-motion`.** Static dots and instant formation swaps instead of morphs.

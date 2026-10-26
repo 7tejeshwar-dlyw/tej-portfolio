@@ -1,27 +1,32 @@
 :root {
+  /* Default: dark. Light particles on a near-black cool ground — the particle-portrait look. */
+  --ground: #0C0D11;
+  --ground-2: #14161E;
+  --ink: #EEF1F6;    /* brightest — silhouette edges */
+  --ink2: #A4ABB8;   /* mid */
+  --ink3: #5C6475;   /* dim — interior scatter */
+  --ink-soft: #99A1AD;
+  --ink-faint: #59616E;
+  --hair: #242833;
+  --accent: #5E6DFF;
+  --pill-border: #2A2F3A;
+  --pill-bg: rgba(255, 255, 255, 0.0);
+  --focus: #6D7BFF;
+}
+
+/* Inverted palette: pale cool-grey ground, ink particles. Accent stays. */
+body.invert {
   --ground: #E8EBEF;
   --ground-2: #DFE3E9;
-  --ink: #15181D;
+  --ink: #10131A;
+  --ink2: #363D48;
+  --ink3: #6B7380;
   --ink-soft: #5B626D;
   --ink-faint: #9AA1AC;
   --hair: #C3C9D2;
   --accent: #2230FF;
   --pill-border: #C7CDD6;
-  --pill-bg: rgba(255, 255, 255, 0.0);
   --focus: #2230FF;
-}
-
-/* Inverted palette: cool near-black ground, pale ink. Accent stays. */
-body.invert {
-  --ground: #0D0F13;
-  --ground-2: #141821;
-  --ink: #E7EAEF;
-  --ink-soft: #99A1AD;
-  --ink-faint: #5A626E;
-  --hair: #2A303B;
-  --accent: #5868FF;
-  --pill-border: #2C333E;
-  --focus: #6D7BFF;
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
