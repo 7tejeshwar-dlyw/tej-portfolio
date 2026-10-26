@@ -2,3 +2,6 @@
 .vercel
 node_modules/
 *.log
+
+# source reference image (not needed at runtime)
+_ref.png

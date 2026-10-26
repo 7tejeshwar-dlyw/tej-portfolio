@@ -3,68 +3,71 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <title>Tejeshwar Vijayakumar — lowk.in</title>
-  <meta name="description" content="Tejeshwar Vijayakumar (Tej) — solo founder of lowk.in, a nationwide platform for event discovery, ticketing and real-world networking. Built with AI-assisted development." />
+  <title>Tejeshwar Vijayakumar — Founder, lowk.in</title>
+  <meta name="description" content="Tejeshwar Vijayakumar (Tej) — solo founder of lowk.in, a nationwide platform for event discovery, ticketing and real-world networking. An interactive particle portrait built with AI-assisted development." />
   <meta name="author" content="Tejeshwar Vijayakumar" />
-  <meta name="theme-color" content="#0C0D11" />
+  <meta name="theme-color" content="#08090C" />
   <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
 
-  <!-- Open Graph -->
   <meta property="og:type" content="website" />
-  <meta property="og:title" content="Tejeshwar Vijayakumar — lowk.in" />
-  <meta property="og:description" content="Solo founder of lowk.in — event discovery, ticketing and real-world networking, built in a single particle canvas." />
+  <meta property="og:title" content="Tejeshwar Vijayakumar — Founder, lowk.in" />
+  <meta property="og:description" content="An interactive particle portrait. Each formation demonstrates a function of lowk.in — discovery, ticketing, networking, organising." />
   <meta property="og:site_name" content="Tejeshwar Vijayakumar" />
-  <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Tejeshwar Vijayakumar — lowk.in" />
-  <meta name="twitter:description" content="Solo founder of lowk.in — event discovery, ticketing and real-world networking." />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Tejeshwar Vijayakumar — Founder, lowk.in" />
+  <meta name="twitter:description" content="An interactive particle portrait built with AI-assisted development." />
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist+Mono:wght@300;400;500;600&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="./styles.css" />
 </head>
 <body>
-  <a class="skip-link" href="#dock">Skip to controls</a>
+  <a class="skip-link" href="#index">Skip to navigation</a>
 
-  <!-- The single canvas is the whole site -->
+  <!-- The portrait: one canvas, ~16k particles -->
   <canvas id="field" aria-hidden="true"></canvas>
 
-  <!-- Text layer: name + caption. Lives above canvas, pointer-events none except links. -->
-  <header class="wordmark" aria-hidden="false">
-    <h1 class="name">Tejeshwar&nbsp;Vijayakumar</h1>
-    <p class="role">Founder, <span class="lowk">lowk.in</span> · BITS&nbsp;Pilani&nbsp;Hyderabad</p>
+  <!-- Atmosphere -->
+  <div class="vignette" aria-hidden="true"></div>
+  <div class="grain" aria-hidden="true"></div>
+
+  <!-- Identity lockup (top-left) -->
+  <header class="intro reveal">
+    <p class="kicker" style="--d:0">Founder<span class="sep">/</span><span class="lowk">lowk.in</span></p>
+    <h1 class="name"><span style="--d:1">Tejeshwar</span><span style="--d:2">Vijayakumar</span></h1>
+    <p class="meta" style="--d:3">Eighteen · BITS&nbsp;Pilani, Hyderabad</p>
   </header>
 
-  <div class="caption" id="caption" role="status" aria-live="polite">
+  <!-- Function index (right) -->
+  <nav class="index reveal" id="index" aria-label="lowk functions">
+    <p class="index-label" style="--d:2">Explore</p>
+    <ul>
+      <li style="--d:3"><button class="fx" data-mode="discover" data-key="1" aria-label="Discover — events across India"><span class="n">01</span><span class="t">Discover</span></button></li>
+      <li style="--d:4"><button class="fx" data-mode="ticket" data-key="2" aria-label="Ticket — book and tear a ticket"><span class="n">02</span><span class="t">Ticket</span></button></li>
+      <li style="--d:5"><button class="fx" data-mode="network" data-key="3" aria-label="Network — people meeting at events"><span class="n">03</span><span class="t">Network</span></button></li>
+      <li style="--d:6"><button class="fx" data-mode="organise" data-key="4" aria-label="Organise — run a tournament bracket"><span class="n">04</span><span class="t">Organise</span></button></li>
+      <li style="--d:7"><button class="fx" data-mode="about" data-key="5" aria-label="About — return to the portrait"><span class="n">05</span><span class="t">About</span></button></li>
+      <li class="rule" style="--d:8"></li>
+      <li style="--d:9"><a class="fx" href="https://lowk.in" target="_blank" rel="noopener noreferrer" data-key="6" aria-label="Open lowk.in in a new tab"><span class="n">06</span><span class="t">Open lowk.in</span><span class="ext">↗</span></a></li>
+      <li style="--d:10"><a class="fx" href="mailto:7tejeshwar@gmail.com" data-key="7" aria-label="Contact Tejeshwar by email"><span class="n">07</span><span class="t">Contact</span></a></li>
+    </ul>
+  </nav>
+
+  <!-- Live caption (bottom-left) -->
+  <div class="caption reveal" id="caption" role="status" aria-live="polite" style="--d:4">
     <span class="caption-key" id="caption-key">About</span>
     <span class="caption-text" id="caption-text">Tejeshwar Vijayakumar — Tej, 18. Solo founder of lowk.in. I build calm software for real-world gatherings.</span>
   </div>
 
-  <!-- Primary function buttons. Each demonstrates one lowk function. -->
-  <nav class="dock" id="dock" aria-label="lowk functions">
-    <button class="pill" data-mode="discover" data-key="1" aria-label="Discover — events across India">
-      <span class="num">1</span>Discover</button>
-    <button class="pill" data-mode="ticket" data-key="2" aria-label="Ticket — book and tear a ticket">
-      <span class="num">2</span>Ticket</button>
-    <button class="pill" data-mode="network" data-key="3" aria-label="Network — people meeting at events">
-      <span class="num">3</span>Network</button>
-    <button class="pill" data-mode="organise" data-key="4" aria-label="Organise — run a tournament bracket">
-      <span class="num">4</span>Organise</button>
-    <button class="pill" data-mode="about" data-key="5" aria-label="About — return to the portrait">
-      <span class="num">5</span>About</button>
-    <a class="pill" href="https://lowk.in" target="_blank" rel="noopener noreferrer" data-key="6" aria-label="Open lowk.in in a new tab">
-      <span class="num">6</span>Open&nbsp;lowk.in</a>
-    <a class="pill" href="mailto:7tejeshwar@gmail.com" data-key="7" aria-label="Contact Tejeshwar by email">
-      <span class="num">7</span>Contact</a>
-  </nav>
-
-  <!-- Utility toggles -->
-  <div class="utils" aria-label="Display options">
-    <button class="util" id="invert" aria-pressed="false" aria-label="Invert palette (light / dark)">invert</button>
-    <button class="util" id="reduce" aria-pressed="false" aria-label="Reduce particle count">fewer dots</button>
+  <!-- Controls (bottom bar) -->
+  <div class="controls reveal" style="--d:11">
+    <div class="utils" aria-label="Display options">
+      <button class="util" id="invert" aria-pressed="false" aria-label="Invert palette (dark / light)">invert</button>
+      <button class="util" id="reduce" aria-pressed="false" aria-label="Reduce particle count">fewer dots</button>
+    </div>
+    <p class="hint" id="hint" aria-hidden="true">press 1–7&nbsp;&nbsp;·&nbsp;&nbsp;drag through the portrait</p>
   </div>
-
-  <div class="hint" id="hint" aria-hidden="true">press 1–7 · move the cursor through the field</div>
 
   <script src="./app.js"></script>
 </body>

@@ -15,8 +15,8 @@
   const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
   // ---- Config -----------------------------------------------------------
-  const BASE_COUNT = 13000;          // particle budget
-  const ACCENT_COUNT = 380;          // the lowk node (always accent-colored)
+  const BASE_COUNT = 16000;          // particle budget
+  const ACCENT_COUNT = 420;          // the lowk node (always accent-colored)
   let COUNT = BASE_COUNT;
 
   // Palette read from CSS variables so invert "just works".
@@ -104,8 +104,10 @@
   // ======================================================================
   const silCanvas = document.createElement("canvas");
   const silCtx = silCanvas.getContext("2d", { willReadFrequently: true });
-  let silEdge = new Float32Array(0);   // normalized [x,y] edge points
+  let silEdge = new Float32Array(0);   // normalized [x,y] edge points (within subject bbox)
   let silFill = new Float32Array(0);   // normalized [x,y] interior points
+  let silAR = 0.78;                    // silhouette aspect (w/h), set on sample
+  let silFillS = new Uint8Array(0);    // per-fill-point shade (tonal, from photo luminance)
 
   function drawProceduralSilhouette(c, w, h) {
     c.clearRect(0, 0, w, h);
@@ -173,8 +175,9 @@
   }
 
   function sampleSilhouette(img) {
-    const SW = 300, SH = 360;
+    const SW = 300, SH = 380;
     silCanvas.width = SW; silCanvas.height = SH;
+    const isPhoto = !!img;
     if (img) {
       const ar = img.width / img.height;
       let dw = SW, dh = SW / ar;
@@ -185,26 +188,52 @@
       drawProceduralSilhouette(silCtx, SW, SH);
     }
     const data = silCtx.getImageData(0, 0, SW, SH).data;
-    const T = 110, step = 2;
-    const A = (x, y) => (x < 0 || y < 0 || x >= SW || y >= SH) ? 0 : data[(y * SW + x) * 4 + 3];
-    const edge = [], fill = [];
+    const T = 60, step = isPhoto ? 1 : 2, e = step;
+    const idx = (x, y) => (y * SW + x) * 4;
+    const A = (x, y) => (x < 0 || y < 0 || x >= SW || y >= SH) ? 0 : data[idx(x, y) + 3];
+    // subject bounding box (so placement is aspect-correct & tightly framed)
+    let minx = SW, miny = SH, maxx = 0, maxy = 0, any = false;
+    for (let y = 0; y < SH; y += step) for (let x = 0; x < SW; x += step) {
+      if (A(x, y) > T) { any = true; if (x < minx) minx = x; if (x > maxx) maxx = x; if (y < miny) miny = y; if (y > maxy) maxy = y; }
+    }
+    if (!any) { minx = 0; miny = 0; maxx = SW - 1; maxy = SH - 1; }
+    const bw = Math.max(1, maxx - minx), bh = Math.max(1, maxy - miny);
+    silAR = bw / bh;
+    const edge = [], fill = [], fillS = [];
     for (let y = 0; y < SH; y += step) {
       for (let x = 0; x < SW; x += step) {
         if (A(x, y) <= T) continue;
         const isEdge =
-          A(x - step, y) <= T || A(x + step, y) <= T ||
-          A(x, y - step) <= T || A(x, y + step) <= T ||
-          A(x - step, y - step) <= T || A(x + step, y + step) <= T ||
-          A(x - step, y + step) <= T || A(x + step, y - step) <= T;
-        const nx = (x + (Math.random() - 0.5)) / SW;
-        const ny = (y + (Math.random() - 0.5)) / SH;
-        if (isEdge) edge.push(nx, ny); else fill.push(nx, ny);
+          A(x - e, y) <= T || A(x + e, y) <= T || A(x, y - e) <= T || A(x, y + e) <= T ||
+          A(x - e, y - e) <= T || A(x + e, y + e) <= T || A(x - e, y + e) <= T || A(x + e, y - e) <= T;
+        const nx = (x - minx + (Math.random() - 0.5)) / bw;
+        const ny = (y - miny + (Math.random() - 0.5)) / bh;
+        if (isEdge) { edge.push([nx, ny]); continue; }
+        if (isPhoto) {
+          const L = data[idx(x, y)] / 255;                 // grayscale tone, 0 dark .. 1 light
+          const prob = 0.1 + 0.9 * Math.pow(1 - L, 1.25);  // darker tones carry more particles
+          if (Math.random() < prob) { fill.push([nx, ny]); fillS.push(L < 0.32 ? 0 : (L < 0.6 ? 1 : 2)); }
+        } else {
+          if (Math.random() < 0.42) { fill.push([nx, ny]); fillS.push(2); }
+        }
       }
     }
-    silEdge = new Float32Array(edge);
-    silFill = new Float32Array(fill);
+    // shuffle so truncation / subsampling stays spatially uniform (no top-biased fills)
+    const shuf = (a, b) => { for (let i = a.length - 1; i > 0; i--) { const j = (Math.random() * (i + 1)) | 0; const t = a[i]; a[i] = a[j]; a[j] = t; if (b) { const u = b[i]; b[i] = b[j]; b[j] = u; } } };
+    shuf(edge); shuf(fill, fillS);
+    silEdge = new Float32Array(edge.length * 2);
+    for (let i = 0; i < edge.length; i++) { silEdge[i * 2] = edge[i][0]; silEdge[i * 2 + 1] = edge[i][1]; }
+    silFill = new Float32Array(fill.length * 2);
+    for (let i = 0; i < fill.length; i++) { silFill[i * 2] = fill[i][0]; silFill[i * 2 + 1] = fill[i][1]; }
+    silFillS = Uint8Array.from(fillS);
   }
-  sampleSilhouette(null);   // procedural by default (no network request → clean console)
+  sampleSilhouette(null);   // procedural fallback renders instantly
+  (function loadMe() {       // then morph into the real photo portrait
+    const img = new Image();
+    img.onload = () => { sampleSilhouette(img); if (currentMode === "about") buildFormation("about", false); };
+    img.onerror = () => {};
+    img.src = "./me.png?v=5";
+  })();
 
   // ======================================================================
   //  FORMATION TARGET GENERATORS
@@ -240,26 +269,35 @@
 
   // --- About / silhouette (edge-weighted) ---
   function formAbout() {
-    const s = geo.sil;
-    placeNode(geo.node.x, geo.node.y, Math.max(7, s.w * 0.05));
-    const ox = s.x - s.w / 2, oy = s.y - s.h / 2;
+    const isMobile = W <= 720;
+    const ar = silAR > 0 ? silAR : 0.78;
+    const targetH = isMobile ? Math.min(H * 0.56, 500) : Math.min(H * 0.86, 880);
+    let fh = targetH, fw = fh * ar;
+    const maxW = W * (isMobile ? 0.94 : 0.62);
+    if (fw > maxW) { fw = maxW; fh = fw / ar; }
+    const cx = isMobile ? W * 0.5 : W * 0.455;
+    const cy = isMobile ? H * 0.44 : H * 0.5;
+    const ox = cx - fw / 2, oy = cy - fh / 2;
+    const nodeX = cx, nodeY = oy + fh * 0.9;      // the lowk mark sits at the base of the bust
+    geo.node = { x: nodeX, y: nodeY };
+    placeNode(nodeX, nodeY, Math.max(7, fw * 0.042));
     const avail = COUNT - ACCENT_COUNT;
     const nEdge = silEdge.length / 2, nFill = silFill.length / 2;
-    const edgeShare = Math.round(avail * 0.70);
+    const edgeShare = Math.round(avail * 0.42);   // outline detail; the rest is tonal fill
     let i = ACCENT_COUNT;
     for (let k = 0; k < edgeShare && i < COUNT; k++, i++) {
       const p = nEdge ? (k % nEdge) * 2 : 0;
-      const j = k >= nEdge ? (Math.random() - 0.5) * 2.1 : 0;
-      tx[i] = ox + (nEdge ? silEdge[p] : 0.5) * s.w + j;
-      ty[i] = oy + (nEdge ? silEdge[p + 1] : 0.5) * s.h + j;
-      shade[i] = (k & 3) === 0 ? 1 : 0;        // mostly brightest, a quarter mid
+      const j = k >= nEdge ? (Math.random() - 0.5) * 1.8 : 0;
+      tx[i] = ox + (nEdge ? silEdge[p] : 0.5) * fw + j;
+      ty[i] = oy + (nEdge ? silEdge[p + 1] : 0.5) * fh + j;
+      shade[i] = (k & 3) === 0 ? 1 : 0;
     }
     for (; i < COUNT; i++) {
       const k = i - ACCENT_COUNT - edgeShare;
       const p = nFill ? (k % nFill) * 2 : 0;
-      tx[i] = ox + (nFill ? silFill[p] : 0.5) * s.w + (Math.random() - 0.5) * 3;
-      ty[i] = oy + (nFill ? silFill[p + 1] : 0.5) * s.h + (Math.random() - 0.5) * 3;
-      shade[i] = 2;                             // dim interior scatter
+      tx[i] = ox + (nFill ? silFill[p] : 0.5) * fw + (Math.random() - 0.5) * 2.2;
+      ty[i] = oy + (nFill ? silFill[p + 1] : 0.5) * fh + (Math.random() - 0.5) * 2.2;
+      shade[i] = nFill ? silFillS[k % nFill] : 2;
     }
   }
 
@@ -435,7 +473,7 @@
     const [k, t] = CAPTIONS[mode];
     setCaption(k, t);
     buildFormation(mode, false);
-    document.querySelectorAll(".pill[data-mode]").forEach((b) => b.classList.toggle("active", b.dataset.mode === mode));
+    document.querySelectorAll("[data-mode]").forEach((b) => b.classList.toggle("active", b.dataset.mode === mode));
     hideHint();
   }
 
@@ -464,7 +502,7 @@
   const anchors = [];
   function updateAnchors() {
     anchors.length = 0;
-    document.querySelectorAll(".pill").forEach((b) => {
+    document.querySelectorAll(".fx").forEach((b) => {
       const r = b.getBoundingClientRect();
       const x = W <= 720 ? r.left + r.width / 2 : r.left;
       const y = W <= 720 ? r.top : r.top + r.height / 2;
@@ -577,7 +615,7 @@
   // ======================================================================
   //  CONTROLS
   // ======================================================================
-  document.querySelectorAll(".pill[data-mode]").forEach((b) => b.addEventListener("click", () => setMode(b.dataset.mode)));
+  document.querySelectorAll("[data-mode]").forEach((b) => b.addEventListener("click", () => setMode(b.dataset.mode)));
   window.addEventListener("keydown", (e) => {
     const map = { "1": "discover", "2": "ticket", "3": "network", "4": "organise", "5": "about" };
     if (map[e.key]) setMode(map[e.key]);
