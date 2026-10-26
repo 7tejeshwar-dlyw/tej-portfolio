@@ -23,7 +23,7 @@
   <link rel="stylesheet" href="./styles.css" />
 </head>
 <body>
-  <a class="skip-link" href="#index">Skip to navigation</a>
+  <a class="skip-link" href="#nav">Skip to navigation</a>
 
   <!-- The portrait: one canvas, ~16k particles -->
   <canvas id="field" aria-hidden="true"></canvas>
@@ -32,6 +32,14 @@
   <div class="vignette" aria-hidden="true"></div>
   <div class="grain" aria-hidden="true"></div>
 
+  <!-- HUD frame + corner marks -->
+  <div class="hud" aria-hidden="true">
+    <span class="tick tl"></span><span class="tick tr"></span>
+    <span class="tick bl"></span><span class="tick br"></span>
+    <span class="corner c-tr">Hyderabad, India<i class="live"></i></span>
+    <span class="corner c-br">Built with AI&nbsp;&nbsp;·&nbsp;&nbsp;MMXXVI</span>
+  </div>
+
   <!-- Identity lockup (top-left) -->
   <header class="intro reveal">
     <p class="kicker" style="--d:0">Founder<span class="sep">/</span><span class="lowk">lowk.in</span></p>
@@ -39,19 +47,15 @@
     <p class="meta" style="--d:3">Eighteen · BITS&nbsp;Pilani, Hyderabad</p>
   </header>
 
-  <!-- Function index (right) -->
-  <nav class="index reveal" id="index" aria-label="lowk functions">
-    <p class="index-label" style="--d:2">Explore</p>
-    <ul>
-      <li style="--d:3"><button class="fx" data-mode="discover" data-key="1" aria-label="Discover — events across India"><span class="n">01</span><span class="t">Discover</span></button></li>
-      <li style="--d:4"><button class="fx" data-mode="ticket" data-key="2" aria-label="Ticket — book and tear a ticket"><span class="n">02</span><span class="t">Ticket</span></button></li>
-      <li style="--d:5"><button class="fx" data-mode="network" data-key="3" aria-label="Network — people meeting at events"><span class="n">03</span><span class="t">Network</span></button></li>
-      <li style="--d:6"><button class="fx" data-mode="organise" data-key="4" aria-label="Organise — run a tournament bracket"><span class="n">04</span><span class="t">Organise</span></button></li>
-      <li style="--d:7"><button class="fx" data-mode="about" data-key="5" aria-label="About — return to the portrait"><span class="n">05</span><span class="t">About</span></button></li>
-      <li class="rule" style="--d:8"></li>
-      <li style="--d:9"><a class="fx" href="https://lowk.in" target="_blank" rel="noopener noreferrer" data-key="6" aria-label="Open lowk.in in a new tab"><span class="n">06</span><span class="t">Open lowk.in</span><span class="ext">↗</span></a></li>
-      <li style="--d:10"><a class="fx" href="mailto:7tejeshwar@gmail.com" data-key="7" aria-label="Contact Tejeshwar by email"><span class="n">07</span><span class="t">Contact</span></a></li>
-    </ul>
+  <!-- Scattered function nodes, each tethered to the lowk node by a hairline -->
+  <nav class="scatter" id="nav" aria-label="lowk functions">
+    <button class="fx pos-1 reveal" style="--d:5" data-mode="discover" data-key="1" aria-label="Discover — events across India"><span class="n">01</span><span class="t">Discover</span></button>
+    <button class="fx pos-2 reveal" style="--d:6" data-mode="ticket" data-key="2" aria-label="Ticket — book and tear a ticket"><span class="n">02</span><span class="t">Ticket</span></button>
+    <button class="fx pos-3 reveal" style="--d:6" data-mode="network" data-key="3" aria-label="Network — people meeting at events"><span class="n">03</span><span class="t">Network</span></button>
+    <button class="fx pos-4 reveal" style="--d:7" data-mode="organise" data-key="4" aria-label="Organise — run a tournament bracket"><span class="n">04</span><span class="t">Organise</span></button>
+    <button class="fx pos-5 reveal" style="--d:7" data-mode="about" data-key="5" aria-label="About — return to the portrait"><span class="n">05</span><span class="t">About</span></button>
+    <a class="fx pos-6 reveal" style="--d:8" href="https://lowk.in" target="_blank" rel="noopener noreferrer" data-key="6" aria-label="Open lowk.in in a new tab"><span class="n">06</span><span class="t">Open lowk.in</span><span class="ext">↗</span></a>
+    <a class="fx pos-7 reveal" style="--d:8" href="mailto:7tejeshwar@gmail.com" data-key="7" aria-label="Contact Tejeshwar by email"><span class="n">07</span><span class="t">Contact</span></a>
   </nav>
 
   <!-- Live caption (bottom-left) -->
@@ -61,7 +65,7 @@
   </div>
 
   <!-- Controls (bottom bar) -->
-  <div class="controls reveal" style="--d:11">
+  <div class="controls reveal" style="--d:10">
     <div class="utils" aria-label="Display options">
       <button class="util" id="invert" aria-pressed="false" aria-label="Invert palette (dark / light)">invert</button>
       <button class="util" id="reduce" aria-pressed="false" aria-label="Reduce particle count">fewer dots</button>

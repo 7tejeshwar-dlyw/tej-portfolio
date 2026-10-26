@@ -69,7 +69,8 @@ body.invert .vignette {
 body.invert .grain { opacity: 0.035; }
 
 /* ---------- Content layers ---------- */
-.intro, .index, .caption, .controls { position: fixed; z-index: 5; }
+.intro, .caption, .controls { position: fixed; z-index: 5; }
+.scatter { position: fixed; inset: 0; z-index: 5; pointer-events: none; }
 
 .intro {
   top: clamp(32px, 6.5vh, 76px);
@@ -105,59 +106,50 @@ body.invert .grain { opacity: 0.035; }
   letter-spacing: 0.01em;
 }
 
-/* ---------- Function index ---------- */
-.index {
-  top: 50%;
-  right: clamp(22px, 4.2vw, 60px);
-  transform: translateY(-50%);
-  text-align: right;
-}
-.index-label {
-  font-size: 11px;
-  color: var(--fg-faint);
-  margin-bottom: 14px;
-  letter-spacing: 0.04em;
-}
-.index ul { list-style: none; display: flex; flex-direction: column; gap: 3px; align-items: flex-end; }
-.index li.rule {
-  width: 42px; height: 1px; background: var(--line);
-  margin: 9px 2px; align-self: flex-end;
-}
+/* ---------- Scattered function nodes ---------- */
+.scatter .fx { position: absolute; pointer-events: auto; white-space: nowrap; }
+.pos-1 { left: 8.5%;  top: 37%; }
+.pos-2 { left: 6.5%;  top: 55%; }
+.pos-3 { left: 72%;   top: 24%; }
+.pos-4 { left: 79%;   top: 40%; }
+.pos-5 { left: 75.5%; top: 55%; }
+.pos-6 { left: 68%;   top: 71%; }
+.pos-7 { left: 56%;   top: 85%; }
+
 .fx {
-  font-family: inherit;
-  font-size: 14px;
-  font-weight: 400;
-  color: var(--fg-soft);
-  background: none; border: 0; cursor: pointer;
-  text-decoration: none;
-  display: inline-flex; align-items: baseline; justify-content: flex-end;
-  gap: 11px; padding: 5px 2px;
+  font-family: inherit; font-size: 14px; font-weight: 400;
+  color: var(--fg-soft); background: none; border: 0; cursor: pointer; text-decoration: none;
+  display: inline-flex; align-items: baseline; gap: 10px; padding: 5px 4px;
   position: relative;
-  transition: color 240ms ease, transform 300ms cubic-bezier(.2,.8,.2,1);
+  transition: color 240ms ease, transform 320ms cubic-bezier(.2,.8,.2,1);
 }
-.fx .n {
-  font-size: 10.5px; font-weight: 500; color: var(--fg-faint);
-  font-variant-numeric: tabular-nums; min-width: 17px;
-  transition: color 240ms ease;
-}
+.fx .n { font-size: 10.5px; font-weight: 500; color: var(--fg-faint); font-variant-numeric: tabular-nums; transition: color 240ms ease; }
 .fx .t { position: relative; }
-.fx .ext { font-size: 11px; color: var(--fg-faint); margin-left: 2px; }
-.fx:hover { color: var(--fg); transform: translateX(-4px); }
+.fx .ext { font-size: 11px; color: var(--fg-faint); margin-left: 1px; }
+.fx:hover { color: var(--fg); transform: translateY(-2px); }
 .fx:hover .n { color: var(--accent-soft); }
-/* underline grow on the title */
 .fx .t::after {
   content: ""; position: absolute; left: 0; right: 0; bottom: -3px; height: 1px;
-  background: currentColor; transform: scaleX(0); transform-origin: right;
+  background: currentColor; transform: scaleX(0); transform-origin: left;
   transition: transform 300ms cubic-bezier(.2,.8,.2,1);
 }
-.fx:hover .t::after { transform: scaleX(1); transform-origin: left; }
+.fx:hover .t::after, .fx.active .t::after { transform: scaleX(1); }
 .fx.active { color: var(--accent); }
 .fx.active .n { color: var(--accent); }
-.fx.active::before {
-  content: ""; position: absolute; right: calc(100% + 10px); top: 50%;
-  width: 20px; height: 1px; background: var(--accent); transform: translateY(-50%);
-}
 .fx:focus-visible { outline: 2px solid var(--focus); outline-offset: 4px; border-radius: 3px; }
+
+/* ---------- HUD frame + corner marks ---------- */
+.hud { position: fixed; inset: 0; z-index: 3; pointer-events: none; }
+.hud .tick { position: absolute; width: 10px; height: 10px; border: 0 solid var(--line); }
+.hud .tick.tl { left: 16px; top: 16px; border-left-width: 1px; border-top-width: 1px; }
+.hud .tick.tr { right: 16px; top: 16px; border-right-width: 1px; border-top-width: 1px; }
+.hud .tick.bl { left: 16px; bottom: 16px; border-left-width: 1px; border-bottom-width: 1px; }
+.hud .tick.br { right: 16px; bottom: 16px; border-right-width: 1px; border-bottom-width: 1px; }
+.hud .corner { position: absolute; font-size: 10.5px; color: var(--fg-faint); letter-spacing: 0.04em; display: inline-flex; align-items: center; gap: 7px; }
+.hud .c-tr { right: 30px; top: 21px; }
+.hud .c-br { right: 30px; bottom: 21px; }
+.hud .live { width: 5px; height: 5px; border-radius: 50%; background: var(--accent); animation: blink 2.6s ease-in-out infinite; }
+@keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.25; } }
 
 /* ---------- Caption ---------- */
 .caption {
@@ -205,7 +197,7 @@ body.invert .grain { opacity: 0.035; }
 
 /* ---------- Entrance ---------- */
 @keyframes rise { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
-.kicker, .name span, .meta, .index-label, .index li, .caption, .controls {
+.kicker, .name span, .meta, .caption, .controls, .scatter .fx {
   opacity: 0;
   animation: rise 0.8s cubic-bezier(.2,.75,.2,1) forwards;
   animation-delay: calc(var(--d, 0) * 55ms + 180ms);
@@ -218,19 +210,20 @@ body.invert .grain { opacity: 0.035; }
   }
   .kicker { justify-content: center; }
   .name { font-size: clamp(38px, 12vw, 60px); margin: 8px 0 8px; }
-  .index {
-    top: auto; right: 0; left: 0; bottom: 58px; transform: none; text-align: center;
+  .scatter {
+    inset: auto 0 56px 0; height: auto;
+    display: flex; flex-wrap: wrap; justify-content: center; align-items: center;
+    gap: 6px 7px; padding: 0 14px;
   }
-  .index-label, .index li.rule { display: none; }
-  .index ul { flex-direction: row; flex-wrap: wrap; justify-content: center; gap: 6px 7px; padding: 0 14px; }
-  .fx {
+  .scatter .fx {
+    position: static;
     border: 1px solid var(--line); border-radius: 999px; padding: 7px 12px; font-size: 12px; gap: 6px;
   }
+  .scatter .fx .n { display: none; }
   .fx:hover { transform: none; }
-  .fx .n { display: none; }
   .fx .t::after { display: none; }
   .fx.active { border-color: var(--accent); }
-  .fx.active::before { display: none; }
+  .hud .corner { display: none; }
   .caption {
     left: 0; right: 0; bottom: 120px; max-width: none; padding: 0 22px; text-align: center;
   }
@@ -243,5 +236,5 @@ body.invert .grain { opacity: 0.035; }
 @media (prefers-reduced-motion: reduce) {
   html, body, .vignette { transition: none; }
   .fx, .util, .fx .t::after { transition: none; }
-  .kicker, .name span, .meta, .index-label, .index li, .caption, .controls { opacity: 1; animation: none; }
+  .kicker, .name span, .meta, .caption, .controls, .scatter .fx { opacity: 1; animation: none; }
 }

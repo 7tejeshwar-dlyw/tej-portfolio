@@ -52,6 +52,7 @@
     layout();
     buildFormation(currentMode, true);
     updateAnchors();
+    if (!ambInit) initAmbient();
   }
 
   // ---- Particle state (typed arrays, allocated once at max budget) ------
@@ -73,6 +74,20 @@
     px[i] = Math.random() * 1200;
     py[i] = Math.random() * 800;
     seed[i] = Math.random() * Math.PI * 2;
+  }
+
+  // Ambient drifting field — fills negative space, sits behind the portrait.
+  const N_AMB = 320;
+  const ambX = new Float32Array(N_AMB), ambY = new Float32Array(N_AMB);
+  const ambVX = new Float32Array(N_AMB), ambVY = new Float32Array(N_AMB), ambS = new Float32Array(N_AMB);
+  let ambInit = false;
+  function initAmbient() {
+    for (let i = 0; i < N_AMB; i++) {
+      ambX[i] = Math.random() * W; ambY[i] = Math.random() * H;
+      const a = Math.random() * Math.PI * 2, sp = 0.05 + Math.random() * 0.12;
+      ambVX[i] = Math.cos(a) * sp; ambVY[i] = Math.sin(a) * sp; ambS[i] = Math.random();
+    }
+    ambInit = true;
   }
 
   // shade bucket derived from a particle's stable seed (used by non-portrait forms)
@@ -504,9 +519,7 @@
     anchors.length = 0;
     document.querySelectorAll(".fx").forEach((b) => {
       const r = b.getBoundingClientRect();
-      const x = W <= 720 ? r.left + r.width / 2 : r.left;
-      const y = W <= 720 ? r.top : r.top + r.height / 2;
-      anchors.push({ x, y });
+      anchors.push({ l: r.left, t: r.top, r: r.right, b: r.bottom });
     });
   }
 
@@ -521,18 +534,44 @@
     ctx.fillStyle = col.ground;
     ctx.fillRect(0, 0, W, H);
 
-    // hub = mean of accent particles (node position for hairlines + glow)
+    // ambient drifting field (behind everything) — fills the negative space
+    ctx.fillStyle = col.ink3;
+    ctx.globalAlpha = 0.5;
+    for (let i = 0; i < N_AMB; i++) {
+      let x = ambX[i] + ambVX[i], y = ambY[i] + ambVY[i];
+      if (x < 0) x += W; else if (x > W) x -= W;
+      if (y < 0) y += H; else if (y > H) y -= H;
+      ambX[i] = x; ambY[i] = y;
+      const s = ambS[i] < 0.5 ? 1 : 1.4;
+      ctx.fillRect(x, y, s, s);
+    }
+    ctx.globalAlpha = 1;
+
+    // hub = mean of accent particles (the lowk node — origin of the constellation)
     let axSum = 0, aySum = 0;
     for (let i = 0; i < ACCENT_COUNT; i++) { axSum += px[i]; aySum += py[i]; }
     const hubX = axSum / ACCENT_COUNT, hubY = aySum / ACCENT_COUNT;
 
-    // hairlines
-    ctx.strokeStyle = col.hair;
+    // constellation hairlines from the node to the nearest edge of each scattered button
+    ctx.strokeStyle = col.ink3;
     ctx.lineWidth = 1;
-    ctx.globalAlpha = 0.6;
+    ctx.globalAlpha = 0.42;
     ctx.beginPath();
-    for (let a = 0; a < anchors.length; a++) { ctx.moveTo(hubX, hubY); ctx.lineTo(anchors[a].x, anchors[a].y); }
+    for (let a = 0; a < anchors.length; a++) {
+      const an = anchors[a];
+      const nx = hubX < an.l ? an.l : (hubX > an.r ? an.r : hubX);
+      const ny = hubY < an.t ? an.t : (hubY > an.b ? an.b : hubY);
+      ctx.moveTo(hubX, hubY); ctx.lineTo(nx, ny);
+    }
     ctx.stroke();
+    // a small node dot where each hairline meets its button
+    ctx.fillStyle = col.ink2;
+    for (let a = 0; a < anchors.length; a++) {
+      const an = anchors[a];
+      const nx = hubX < an.l ? an.l : (hubX > an.r ? an.r : hubX);
+      const ny = hubY < an.t ? an.t : (hubY > an.b ? an.b : hubY);
+      ctx.fillRect(nx - 1.4, ny - 1.4, 2.8, 2.8);
+    }
     ctx.globalAlpha = 1;
 
     // network links near cursor

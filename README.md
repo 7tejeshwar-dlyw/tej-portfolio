@@ -50,9 +50,11 @@ motion system, and handled the git history, GitHub repo and Vercel deployment en
   makes no per-frame allocations in the particle passes. Spring physics drive the morphs,
   cursor repulsion, and a gentle idle shimmer. Three tonal shades + size variation give
   the figure depth; the lowk node has a soft pulsing glow.
-- **Design.** Instrument Serif (display) paired with Geist Mono (interface); a numbered
-  function index with animated states; film grain + a subtle vignette for atmosphere; a
-  staggered entrance reveal. A single accent colour throughout.
+- **Design.** Instrument Serif (display) paired with Geist Mono (interface); seven
+  function nodes scattered around the portrait, each tethered to the lowk node by a
+  hairline — a live constellation that re-anchors for every formation. An ambient drifting
+  field and a light HUD frame fill the negative space; film grain + a subtle vignette add
+  atmosphere; a staggered entrance reveal. A single accent colour throughout.
 - **Accessible.** Real buttons/links with `aria-label`s, visible keyboard focus, keyboard
   shortcuts `1–7`, an `aria-live` caption, readable contrast, and full `<title>`/OG tags.
 - **`prefers-reduced-motion`.** Static dots, instant formation swaps, no entrance animation.
