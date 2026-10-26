@@ -28,8 +28,8 @@ Two utility toggles: **invert** the palette (dark ⇄ light) and show **fewer do
 ## About lowk.in
 
 A nationwide platform for event discovery, ticketing and real-world networking —
-built for tournaments, MUNs, college fests and grassroots gatherings. First paying
-client: **Revolution Clash**.
+built for tournaments, MUNs, college fests and grassroots gatherings. The sample
+reveals throughout the site use a real lowk event — **Nocturne** (Chennai).
 
 ## How it was built (AI-assisted development)
 
@@ -56,7 +56,7 @@ motion system, and handled the git history, GitHub repo and Vercel deployment en
   field and a light HUD frame fill the negative space; film grain + a subtle vignette add
   atmosphere; a staggered entrance reveal. A single accent colour throughout.
 - **Product, not just dots.** The Ticket formation resolves into a real lowk sample ticket
-  (Revolution Clash) — hover to tilt it in 3D, tear the stub to book; the particle field
+  (Nocturne) — hover to tilt it in 3D, tear the stub to book; the particle field
   tears in sync. The lowk node at the portrait's core is labelled and clickable → lowk.in.
 - **Accessible.** Real buttons/links with `aria-label`s, visible keyboard focus, keyboard
   shortcuts `1–7`, an `aria-live` caption, readable contrast, and full `<title>`/OG tags.
@@ -66,8 +66,8 @@ motion system, and handled the git history, GitHub repo and Vercel deployment en
 - **Responsive.** On mobile the portrait sits upper-middle and the index becomes a bottom
   dock; touch interaction and the ticket tear both work.
 
-> The portrait is a reference likeness used while building; drop a transparent-background
-> cutout of your own photo at `me.png` to personalise it.
+> The portrait is sampled from a real photo of Tejeshwar (cut out with `rembg`, then
+> rendered as a luminous "emerge-from-shadow" tonal field). Swap `me.png` to use any portrait.
 
 ## Run locally
 

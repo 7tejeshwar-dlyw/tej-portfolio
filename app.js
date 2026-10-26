@@ -247,7 +247,7 @@
     const img = new Image();
     img.onload = () => { sampleSilhouette(img); if (currentMode === "about") buildFormation("about", false); };
     img.onerror = () => {};
-    img.src = "./me.png?v=5";
+    img.src = "./me.png?v=6";
   })();
 
   // ======================================================================
@@ -464,7 +464,7 @@
     about:    ["About", "lowk.in is my core work — a nationwide platform for event discovery, ticketing and real-world networking, built for tournaments, MUNs, college fests and grassroots gatherings."],
     discover: ["Discover", "lowk puts every event on one map — tournaments, MUNs, fests and grassroots meetups across India. Find what's happening near you."],
     ticket:   ["Ticket", "Tap the stub to tear it off. lowk turns discovery into a booked seat in one move — no scattered forms, no DMs."],
-    network:  ["Network", "Move through the field — people connect. lowk turns events into real-world networks. First paying client: Revolution Clash."],
+    network:  ["Network", "Move through the field — people connect. lowk turns events into real-world networks — meet people before the night even starts."],
     organise: ["Organise", "lowk hands organisers the whole stack — list it, ticket it, and run the bracket end to end."],
   };
   function setCaption(key, text) {
@@ -698,31 +698,36 @@
   setTimeout(hideHint, 6000);
 
   // ----- Sample lowk ticket: the ticket formation resolves into a real product -----
-  const ticketSample = document.getElementById("ticketSample");
+  const sample = document.getElementById("sample");
+  const sampleCards = document.querySelectorAll("#sample .card");
   const tkt = document.getElementById("tkt");
   const tktStub = document.getElementById("tktStub");
   const tktStatus = document.getElementById("tktStatus");
   const tktTear = document.getElementById("tktTear");
   const sampleHint = document.getElementById("sampleHint");
+  const SAMPLE_WITH = ["ticket", "discover", "network", "organise"];
+  const SAMPLE_HINT = {
+    ticket: "a real Nocturne ticket · hover it, then tear the stub",
+    discover: "a live slice of lowk Discover",
+    network: "lowk Network — meet people at real events",
+    organise: "the lowk organiser toolkit",
+  };
   function showSample(mode) {
-    const on = mode === "ticket";
-    ticketSample.classList.toggle("on", on);
-    ticketSample.setAttribute("aria-hidden", String(!on));
-    if (on) {
-      tkt.classList.remove("torn");
-      tkt.style.transform = "";
-      tktStatus.textContent = "Reserved";
-      tktTear.textContent = "tear to book ▸";
-      if (sampleHint) sampleHint.textContent = "a real lowk ticket · hover it, then tear the stub";
-    } else {
-      tkt.style.transform = "";
+    const has = SAMPLE_WITH.includes(mode);
+    sample.classList.toggle("on", has);
+    sample.setAttribute("aria-hidden", String(!has));
+    sampleCards.forEach((c) => c.classList.toggle("show", c.dataset.for === mode));
+    if (mode === "ticket") {
+      tkt.classList.remove("torn"); tkt.style.transform = "";
+      tktStatus.textContent = "Reserved"; tktTear.textContent = "tear to book ▸";
     }
+    if (sampleHint) sampleHint.textContent = SAMPLE_HINT[mode] || "";
   }
   tktStub.addEventListener("click", () => {
     if (tkt.classList.contains("torn")) return;
     tkt.classList.add("torn");
     tktStatus.textContent = "Booked";
-    if (sampleHint) sampleHint.textContent = "booked with lowk — see you at the event ✓";
+    if (sampleHint) sampleHint.textContent = "booked with lowk — see you at Nocturne ✓";
     tearStub();   // echo the tear in the particle field
   });
   if (!prefersReduced) {

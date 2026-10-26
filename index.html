@@ -45,7 +45,7 @@
     <p class="kicker" style="--d:0">Founder<span class="sep">/</span><span class="lowk">lowk.in</span></p>
     <h1 class="name"><span style="--d:1">Tejeshwar</span><span style="--d:2">Vijayakumar</span></h1>
     <p class="lead" style="--d:3">Building <span class="lowk">lowk.in</span> — a nationwide platform for event discovery, ticketing &amp; real-world networking.</p>
-    <p class="meta" style="--d:4">Eighteen · BITS&nbsp;Pilani, Hyderabad&nbsp;&nbsp;·&nbsp;&nbsp;first client, Revolution&nbsp;Clash</p>
+    <p class="meta" style="--d:4">Eighteen · BITS&nbsp;Pilani, Hyderabad&nbsp;&nbsp;·&nbsp;&nbsp;now&nbsp;live: Nocturne</p>
   </header>
 
   <!-- Scattered function nodes, each tethered to the lowk node by a hairline -->
@@ -77,30 +77,62 @@
   <!-- lowk pillars (right edge) -->
   <p class="vlabel" aria-hidden="true">Event discovery&nbsp;&nbsp;·&nbsp;&nbsp;Ticketing&nbsp;&nbsp;·&nbsp;&nbsp;Real-world networking</p>
 
-  <!-- Sample lowk ticket — the particles resolve into a real product -->
-  <div class="sample" id="ticketSample" aria-hidden="true">
-    <div class="tkt" id="tkt">
+  <!-- Each function resolves the particles into a real slice of lowk -->
+  <div class="sample" id="sample" aria-hidden="true">
+
+    <!-- Ticket → a real Nocturne e-ticket -->
+    <div class="card tkt card-ticket" id="tkt" data-for="ticket">
       <div class="tkt-main">
-        <div class="tkt-top">
-          <span class="tkt-brand">lowk<i>.in</i></span>
-          <span class="tkt-tag">e-ticket</span>
-        </div>
-        <div class="tkt-event">Revolution&nbsp;Clash</div>
-        <div class="tkt-sub">General admission</div>
+        <div class="tkt-top"><span class="tkt-brand">lowk<i>.in</i></span><span class="tkt-tag">underground</span></div>
+        <div class="tkt-event">Nocturne</div>
+        <div class="tkt-sub">Fri 10 Jul 2026 · 4–8 PM · Nungambakkam, Chennai</div>
         <div class="tkt-grid">
-          <div><span class="k">Gate</span><span class="v">A</span></div>
-          <div><span class="k">Ref</span><span class="v">LWK·0042</span></div>
+          <div><span class="k">Tier</span><span class="v">General</span></div>
+          <div><span class="k">Entry</span><span class="v">₹699</span></div>
           <div><span class="k">Status</span><span class="v ok" id="tktStatus">Reserved</span></div>
         </div>
         <span class="tkt-sample-tag">sample</span>
       </div>
       <button class="tkt-stub" id="tktStub" aria-label="Tear the stub to book this sample ticket">
         <span class="qr" aria-hidden="true"></span>
-        <span class="tkt-stub-label">admit one</span>
+        <span class="tkt-stub-label">admit · 042</span>
         <span class="tkt-tear" id="tktTear">tear to book ▸</span>
       </button>
     </div>
-    <p class="sample-hint" id="sampleHint">a real lowk ticket · hover it, then tear the stub</p>
+
+    <!-- Discover → events feed -->
+    <div class="card panel card-discover" data-for="discover">
+      <div class="panel-head"><span class="panel-title">Discover</span><span class="panel-tag">near you</span></div>
+      <div class="dsc-search">⌕&nbsp;&nbsp;Search events near you…</div>
+      <div class="chips"><span>Tournaments</span><span>MUNs</span><span>Fests</span><span class="on">Underground</span></div>
+      <div class="evrow">
+        <span class="evthumb">N</span>
+        <span class="evmeta"><span class="evname">Nocturne</span><span class="evsub">Chennai · 10 Jul · from ₹699</span></span>
+        <span class="evgo">Going&nbsp;▸</span>
+      </div>
+      <p class="panel-foot">Every event on one map — tournaments, MUNs, fests &amp; grassroots meetups.</p>
+    </div>
+
+    <!-- Network → people at events -->
+    <div class="card panel card-network" data-for="network">
+      <div class="panel-head"><span class="panel-title">Network</span><span class="panel-tag">at Nocturne</span></div>
+      <div class="avatars"><i>AK</i><i>RS</i><i>MJ</i><i>TV</i><i class="more">+</i></div>
+      <div class="netline"><b class="dot"></b><b class="seg"></b><b class="dot"></b><b class="seg"></b><b class="dot on"></b><b class="seg"></b><b class="dot"></b></div>
+      <p class="panel-foot">See who's going before the night starts — lowk turns events into real-world networks.</p>
+    </div>
+
+    <!-- Organise → organiser toolkit -->
+    <div class="card panel card-organise" data-for="organise">
+      <div class="panel-head"><span class="panel-title">Organise</span><span class="panel-tag">Nocturne · live</span></div>
+      <div class="org-tiers">
+        <span class="tier"><span>General</span><b>₹699</b></span>
+        <span class="tier"><span>Group of 4</span><b>₹2499</b></span>
+      </div>
+      <div class="org-tools"><span>Price tiers</span><span>QR check-in</span><span>Payouts</span></div>
+      <p class="panel-foot">List it, price it, scan them in at the door — run the whole event end to end.</p>
+    </div>
+
+    <p class="sample-hint" id="sampleHint">a real Nocturne ticket · hover it, then tear the stub</p>
   </div>
 
   <script src="./app.js"></script>
