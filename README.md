@@ -55,6 +55,9 @@ motion system, and handled the git history, GitHub repo and Vercel deployment en
   hairline — a live constellation that re-anchors for every formation. An ambient drifting
   field and a light HUD frame fill the negative space; film grain + a subtle vignette add
   atmosphere; a staggered entrance reveal. A single accent colour throughout.
+- **Product, not just dots.** The Ticket formation resolves into a real lowk sample ticket
+  (Revolution Clash) — hover to tilt it in 3D, tear the stub to book; the particle field
+  tears in sync. The lowk node at the portrait's core is labelled and clickable → lowk.in.
 - **Accessible.** Real buttons/links with `aria-label`s, visible keyboard focus, keyboard
   shortcuts `1–7`, an `aria-live` caption, readable contrast, and full `<title>`/OG tags.
 - **`prefers-reduced-motion`.** Static dots, instant formation swaps, no entrance animation.

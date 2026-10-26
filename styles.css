@@ -99,6 +99,16 @@ body.invert .grain { opacity: 0.035; }
 }
 .name span { display: block; }
 
+.lead {
+  font-size: clamp(12.5px, 1.15vw, 14.5px);
+  font-weight: 300;
+  line-height: 1.5;
+  color: var(--fg);
+  max-width: min(38vw, 400px);
+  margin: 0 0 clamp(10px, 1.5vh, 16px);
+}
+.lead .lowk { font-weight: 500; }
+
 .meta {
   font-size: clamp(11px, 1vw, 13px);
   font-weight: 300;
@@ -151,6 +161,65 @@ body.invert .grain { opacity: 0.035; }
 .hud .live { width: 5px; height: 5px; border-radius: 50%; background: var(--accent); animation: blink 2.6s ease-in-out infinite; }
 @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.25; } }
 
+/* ---------- lowk pillars strap (right edge) ---------- */
+.vlabel {
+  position: fixed; right: 15px; top: 50%; transform: translateY(-50%);
+  writing-mode: vertical-rl; text-orientation: mixed;
+  font-size: 10px; font-weight: 400; color: var(--fg-faint);
+  letter-spacing: 0.1em; z-index: 3; pointer-events: none;
+}
+@media (max-width: 1120px) { .vlabel { display: none; } }
+
+/* ---------- Sample lowk ticket (resolves from the particles) ---------- */
+.sample { position: fixed; inset: 0; z-index: 4; pointer-events: none; opacity: 0; transition: opacity 500ms ease; }
+.sample.on { opacity: 1; }
+.tkt {
+  position: absolute; left: 46%; top: 50%;
+  transform: translate(-50%, -50%) perspective(1000px) scale(0.92);
+  width: min(86vw, 430px); display: flex; pointer-events: auto;
+  background: #F5F6F8; color: #14171E; border-radius: 15px; overflow: hidden;
+  box-shadow: 0 34px 90px -24px rgba(0,0,0,0.7), 0 0 0 1px rgba(255,255,255,0.05);
+  transition: transform 650ms cubic-bezier(.2,.85,.2,1);
+  will-change: transform;
+}
+.sample.on .tkt { transform: translate(-50%, -50%) perspective(1000px) scale(1); }
+.tkt-main { flex: 1; padding: 20px 20px 17px; position: relative; }
+.tkt-top { display: flex; align-items: center; justify-content: space-between; }
+.tkt-brand { font-family: "Instrument Serif", serif; font-size: 24px; color: var(--accent); line-height: 1; }
+.tkt-brand i { font-style: normal; color: #14171E; opacity: 0.55; font-size: 18px; }
+.tkt-tag { font-size: 9.5px; letter-spacing: 0.16em; text-transform: uppercase; color: #8A93A2; border: 1px solid #D4D9E1; border-radius: 999px; padding: 3px 8px; }
+.tkt-event { font-family: "Instrument Serif", serif; font-size: 30px; line-height: 1.02; margin-top: 16px; letter-spacing: -0.01em; }
+.tkt-sub { font-size: 11px; color: #6B7482; margin-top: 4px; }
+.tkt-grid { display: flex; gap: 20px; margin-top: 18px; }
+.tkt-grid .k { display: block; font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase; color: #9AA2B0; margin-bottom: 3px; }
+.tkt-grid .v { font-size: 12.5px; font-weight: 500; color: #14171E; }
+.tkt-grid .v.ok { color: var(--accent); }
+.tkt-sample-tag { position: absolute; top: 14px; right: 94px; font-size: 8.5px; letter-spacing: 0.18em; text-transform: uppercase; color: #B4BAC4; }
+.tkt-stub {
+  width: 112px; flex: none; border: 0; border-left: 2px dashed #C6CCD5;
+  background: #ECEEF2; color: #14171E; cursor: pointer; font-family: inherit;
+  padding: 16px 10px 14px; display: flex; flex-direction: column; align-items: center; justify-content: space-between;
+  position: relative; transition: transform 750ms cubic-bezier(.3,.9,.25,1), opacity 650ms ease;
+}
+.tkt-stub::before, .tkt-stub::after { content: ""; position: absolute; left: -10px; width: 18px; height: 18px; border-radius: 50%; background: var(--ground); transition: background 700ms ease; }
+.tkt-stub::before { top: -9px; } .tkt-stub::after { bottom: -9px; }
+.qr { width: 66px; height: 66px; background:
+  repeating-linear-gradient(90deg, #14171E 0 2px, transparent 2px 4px, #14171E 4px 5px, transparent 5px 8px, #14171E 8px 11px, transparent 11px 13px, #14171E 13px 14px, transparent 14px 17px);
+  background-size: 17px 100%; }
+.tkt-stub-label { font-size: 9px; letter-spacing: 0.14em; text-transform: uppercase; color: #8A93A2; }
+.tkt-tear { font-size: 10px; color: var(--accent); font-weight: 500; }
+.tkt:hover .tkt-tear { text-decoration: underline; }
+.tkt.torn .tkt-stub { transform: translate(150px, -6px) rotate(8deg); opacity: 0; pointer-events: none; }
+.sample-hint { position: absolute; left: 0; right: 0; bottom: calc(50% - 170px); text-align: center; font-size: 10.5px; color: var(--fg-faint); letter-spacing: 0.02em; }
+
+@media (max-width: 760px) {
+  .tkt { left: 50%; top: 42%; width: min(90vw, 360px); }
+  .sample-hint { bottom: auto; top: calc(42% + 118px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .sample, .tkt, .tkt-stub { transition: none; }
+}
+
 /* ---------- Caption ---------- */
 .caption {
   left: clamp(22px, 4.2vw, 64px);
@@ -158,11 +227,10 @@ body.invert .grain { opacity: 0.035; }
   max-width: min(66vw, 400px);
   pointer-events: none;
 }
-.caption-key {
-  display: inline-block; font-size: 11px; font-weight: 500; color: var(--accent);
-  margin-bottom: 8px; letter-spacing: 0.02em;
-}
-.caption-key::before { content: "— "; color: var(--fg-faint); }
+.caption-head { display: flex; align-items: baseline; margin-bottom: 8px; }
+.caption-brand { font-size: 11px; font-weight: 600; color: var(--accent); letter-spacing: 0.03em; }
+.caption-key { font-size: 11px; font-weight: 400; color: var(--fg-soft); letter-spacing: 0.02em; }
+.caption-key::before { content: " — "; color: var(--fg-faint); white-space: pre; }
 .caption-text {
   display: block; font-size: clamp(12.5px, 1.1vw, 14.5px); font-weight: 300;
   line-height: 1.55; color: var(--fg);
@@ -197,7 +265,7 @@ body.invert .grain { opacity: 0.035; }
 
 /* ---------- Entrance ---------- */
 @keyframes rise { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
-.kicker, .name span, .meta, .caption, .controls, .scatter .fx {
+.kicker, .name span, .lead, .meta, .caption, .controls, .scatter .fx {
   opacity: 0;
   animation: rise 0.8s cubic-bezier(.2,.75,.2,1) forwards;
   animation-delay: calc(var(--d, 0) * 55ms + 180ms);
@@ -236,5 +304,5 @@ body.invert .grain { opacity: 0.035; }
 @media (prefers-reduced-motion: reduce) {
   html, body, .vignette { transition: none; }
   .fx, .util, .fx .t::after { transition: none; }
-  .kicker, .name span, .meta, .caption, .controls, .scatter .fx { opacity: 1; animation: none; }
+  .kicker, .name span, .lead, .meta, .caption, .controls, .scatter .fx { opacity: 1; animation: none; }
 }

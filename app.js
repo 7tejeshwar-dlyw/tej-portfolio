@@ -461,11 +461,11 @@
   // ======================================================================
   let currentMode = "about";
   const CAPTIONS = {
-    about:    ["About", "Tejeshwar Vijayakumar — Tej, 18. Solo founder of lowk.in. I build calm software for real-world gatherings."],
-    discover: ["Discover", "Events across India — tournaments, MUNs, college fests and grassroots gatherings. lowk lights up what's happening near you."],
-    ticket:   ["Ticket", "Tap the stub to tear it off. lowk handles discovery and ticketing in one move."],
+    about:    ["About", "lowk.in is my core work — a nationwide platform for event discovery, ticketing and real-world networking, built for tournaments, MUNs, college fests and grassroots gatherings."],
+    discover: ["Discover", "lowk puts every event on one map — tournaments, MUNs, fests and grassroots meetups across India. Find what's happening near you."],
+    ticket:   ["Ticket", "Tap the stub to tear it off. lowk turns discovery into a booked seat in one move — no scattered forms, no DMs."],
     network:  ["Network", "Move through the field — people connect. lowk turns events into real-world networks. First paying client: Revolution Clash."],
-    organise: ["Organise", "Run the whole bracket. lowk gives organisers the tools to host tournaments and fests end to end."],
+    organise: ["Organise", "lowk hands organisers the whole stack — list it, ticket it, and run the bracket end to end."],
   };
   function setCaption(key, text) {
     document.getElementById("caption-key").textContent = key;
@@ -489,6 +489,7 @@
     setCaption(k, t);
     buildFormation(mode, false);
     document.querySelectorAll("[data-mode]").forEach((b) => b.classList.toggle("active", b.dataset.mode === mode));
+    showSample(mode);
     hideHint();
   }
 
@@ -496,7 +497,12 @@
   //  POINTER
   // ======================================================================
   const pointer = { x: -9999, y: -9999, active: false };
-  function onMove(e) { const t = e.touches ? e.touches[0] : e; pointer.x = t.clientX; pointer.y = t.clientY; pointer.active = true; }
+  let lastHubX = 0, lastHubY = 0;   // live lowk-node position (for label + click)
+  function onMove(e) {
+    const t = e.touches ? e.touches[0] : e;
+    pointer.x = t.clientX; pointer.y = t.clientY; pointer.active = true;
+    if (!e.touches) canvas.style.cursor = Math.hypot(t.clientX - lastHubX, t.clientY - lastHubY) < 30 ? "pointer" : "default";
+  }
   function onLeave() { pointer.active = false; pointer.x = -9999; pointer.y = -9999; }
   window.addEventListener("mousemove", onMove, { passive: true });
   window.addEventListener("touchmove", onMove, { passive: true });
@@ -504,6 +510,9 @@
   window.addEventListener("mouseleave", onLeave);
   window.addEventListener("touchend", onLeave);
   canvas.addEventListener("pointerdown", (e) => {
+    if (Math.hypot(e.clientX - lastHubX, e.clientY - lastHubY) < 30) {   // the lowk node → open lowk.in
+      window.open("https://lowk.in", "_blank", "noopener"); return;
+    }
     if (currentMode === "ticket" && ticketGeo && !stubTorn) {
       const x = e.clientX, y = e.clientY;
       if (x > ticketGeo.perfX - 14 && x < ticketGeo.x0 + ticketGeo.tw + 20 &&
@@ -551,6 +560,7 @@
     let axSum = 0, aySum = 0;
     for (let i = 0; i < ACCENT_COUNT; i++) { axSum += px[i]; aySum += py[i]; }
     const hubX = axSum / ACCENT_COUNT, hubY = aySum / ACCENT_COUNT;
+    lastHubX = hubX; lastHubY = hubY;
 
     // constellation hairlines from the node to the nearest edge of each scattered button
     ctx.strokeStyle = col.ink3;
@@ -648,6 +658,13 @@
       ctx.fillRect(x, y, as, as);
     }
 
+    // the lowk mark — a label at the node; the node itself is clickable → lowk.in
+    ctx.font = '500 11px "Geist Mono", ui-monospace, monospace';
+    ctx.textBaseline = "middle";
+    ctx.fillStyle = col.accent;
+    ctx.fillText("lowk.in", hubX + 15, hubY + 0.5);
+    ctx.textBaseline = "alphabetic";
+
     requestAnimationFrame(frame);
   }
 
@@ -679,6 +696,45 @@
   let hintHidden = false;
   function hideHint() { if (hintHidden) return; hintHidden = true; const h = document.getElementById("hint"); if (h) h.style.opacity = "0"; }
   setTimeout(hideHint, 6000);
+
+  // ----- Sample lowk ticket: the ticket formation resolves into a real product -----
+  const ticketSample = document.getElementById("ticketSample");
+  const tkt = document.getElementById("tkt");
+  const tktStub = document.getElementById("tktStub");
+  const tktStatus = document.getElementById("tktStatus");
+  const tktTear = document.getElementById("tktTear");
+  const sampleHint = document.getElementById("sampleHint");
+  function showSample(mode) {
+    const on = mode === "ticket";
+    ticketSample.classList.toggle("on", on);
+    ticketSample.setAttribute("aria-hidden", String(!on));
+    if (on) {
+      tkt.classList.remove("torn");
+      tkt.style.transform = "";
+      tktStatus.textContent = "Reserved";
+      tktTear.textContent = "tear to book ▸";
+      if (sampleHint) sampleHint.textContent = "a real lowk ticket · hover it, then tear the stub";
+    } else {
+      tkt.style.transform = "";
+    }
+  }
+  tktStub.addEventListener("click", () => {
+    if (tkt.classList.contains("torn")) return;
+    tkt.classList.add("torn");
+    tktStatus.textContent = "Booked";
+    if (sampleHint) sampleHint.textContent = "booked with lowk — see you at the event ✓";
+    tearStub();   // echo the tear in the particle field
+  });
+  if (!prefersReduced) {
+    tkt.addEventListener("pointermove", (e) => {
+      if (tkt.classList.contains("torn")) return;
+      const r = tkt.getBoundingClientRect();
+      const rx = (e.clientX - r.left) / r.width - 0.5;
+      const ry = (e.clientY - r.top) / r.height - 0.5;
+      tkt.style.transform = `translate(-50%,-50%) perspective(1000px) rotateY(${rx * 11}deg) rotateX(${-ry * 11}deg) scale(1.03)`;
+    });
+    tkt.addEventListener("pointerleave", () => { if (!tkt.classList.contains("torn")) tkt.style.transform = ""; });
+  }
 
   // ======================================================================
   //  BOOT
